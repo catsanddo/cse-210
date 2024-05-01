@@ -17,6 +17,19 @@
         },
 
         {
+            "name": "Rpg Project",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-sandbox-rpg",
+            "program": "${workspaceFolder}/sandbox/rpg/bin/Debug/net8.0/rpg.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/sandbox/rpg",
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "stopAtEntry": false
+        },
+
+        {
             "name": "C# Prep 1",
             "type": "coreclr",
             "request": "launch",

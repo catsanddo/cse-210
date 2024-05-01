@@ -1,20 +1,21 @@
 using System;
+using System.Security.Cryptography.X509Certificates;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.Write("Do you like C sharp? ");
-        string answer = Console.ReadLine();
+        for (bool running = true; running; )
+        {
+            Console.WriteLine("Hello, World!");
 
-        if (answer == "yes") {
-            Console.WriteLine("Me too.");
-        } else if (answer == "no") {
-            Console.WriteLine("Too bad.");
-        } else {
-            Console.WriteLine("Huh?");
+            Console.Write("Would you like to execute again? ");
+            string answer = Console.ReadLine();
+
+            if (answer != "y")
+            {
+                running = false;
+            }
         }
-        
-        Console.WriteLine("Goodbye.");
     }
 }
