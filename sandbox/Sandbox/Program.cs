@@ -5,17 +5,12 @@ class Program
 {
     static void Main(string[] args)
     {
-        for (bool running = true; running; )
-        {
-            Console.WriteLine("Hello, World!");
+        Course course1 = new();
+        course1.ClassCode = "CSE210";
+        course1.ClassName = "Programming with Classes";
+        course1.Credits = 2;
+        course1.Color = "green";
 
-            Console.Write("Would you like to execute again? ");
-            string answer = Console.ReadLine();
-
-            if (answer != "y")
-            {
-                running = false;
-            }
-        }
+        course1.Display();
     }
 }
