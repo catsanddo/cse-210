@@ -13,6 +13,7 @@ class Entry
         Console.WriteLine(prompt);
         Console.WriteLine("(Enter your response here. Type a \".\" on\na line by itself to finish.)");
 
+        // Journal supports multi-line input
         _response = "";
         bool finished = false;
         while (!finished)

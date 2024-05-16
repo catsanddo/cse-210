@@ -10,6 +10,11 @@ class PromptGenerator
         "What are you looking forward to?",
         "What are you not looking forward to?",
         "What are you grateful for recently?",
+        "Who was the most interesting person I interacted with today?",
+        "What was the best part of the day?",
+        "How did I see the hand of the Lord in my life today?",
+        "What was the strongest emotion I felt today?",
+        "If I had one thing I could do over today, what would it be?",
     ];
 
     public Random _rng;

@@ -47,9 +47,25 @@ class Journal
      * be followed by a '.' alone on a line to signal its end.
      */
 
+    // Overload for Save()
+    // When invoked without arguments it queries the user for a filename
     public void Save()
     {
+        Console.Write("Enter a file name: ");
+        string path = Console.ReadLine();
+        Save(path);
+    }
+
+    public void Save(string path)
+    {
         Console.WriteLine("Saving entries...");
+
+        // An empty path will cause WriteAllText to crash; early return
+        if (path == "")
+        {
+            Console.WriteLine();
+            return;
+        }
 
         // No entries to save; early return
         if (_entries.Count < 1)
@@ -66,26 +82,21 @@ class Journal
         // Remove the last colon
         //stringyEntries = stringyEntries[..^2];
 
-        Console.Write("Enter a file name: ");
-        string path = Console.ReadLine();
-
-        // An empty path will cause WriteAllText to crash; early return
-        if (path == "")
-        {
-            Console.WriteLine();
-            return;
-        }
-
         File.WriteAllText(path, stringyEntries);
         Console.WriteLine();
     }
 
+    // Overload for Load(); see Save()
     public void Load()
     {
-        Console.WriteLine("Loading entries...");
-
         Console.Write("Enter a file name: ");
         string path = Console.ReadLine();
+        Load(path);
+    }
+
+    public void Load(string path)
+    {
+        Console.WriteLine("Loading entries...");
 
         // File does not exist; early return
         if (!File.Exists(path))

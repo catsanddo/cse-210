@@ -1,7 +1,11 @@
 /* Travis Scoville (c) 2024
  * Journal program main
+ * Additions:
+ * 1. Allows for multi-line user input in the journal
+ * 2. Saves data to a simple custom text format
+ * 3. Has an auto-saving/loading feature
  */
-using System;
+using System.IO;
 
 class Program
 {
@@ -24,6 +28,13 @@ class Program
         Console.WriteLine("Journal App");
         Console.WriteLine("By Travis Scoville");
         Console.WriteLine("------------------\n");
+
+        // Check for autosave and load if it exists
+        if (File.Exists("backup.txt"))
+        {
+            Console.WriteLine("Found backup entries.");
+            journal.Load("backup.txt");
+        }
 
         bool running = true;
         while (running)
@@ -62,5 +73,8 @@ class Program
                     break;
             }
         }
+
+        // Write autosave to backup.txt
+        journal.Save("backup.txt");
     }
 }
