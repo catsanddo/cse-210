@@ -4,9 +4,9 @@
 
 class Entry
 {
-    public string _prompt;
-    public string _response;
-    public string _date;
+    public string _prompt = "";
+    public string _response = "";
+    public string _date = "";
 
     public void TakeResponse(string prompt)
     {
@@ -33,5 +33,11 @@ class Entry
 
         _prompt = prompt;
         _date = DateTime.Now.ToString();
+    }
+
+    public string Serialize()
+    {
+        string result = _date + "\n" + _prompt + "\n" + _response;
+        return result;
     }
 }
