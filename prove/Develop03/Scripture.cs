@@ -10,6 +10,7 @@ class Scripture
 		_reference = reference;
 		_random = new();
 		_words = [];
+		_hiddenWords = [];
 
 		foreach (string word in text.Split(" "))
 		{
@@ -20,9 +21,9 @@ class Scripture
 	public void Display()
 	{
 		_reference.Display();
-		foreach (Word word in _words)
+		for (int i = 0; i < _words.Count(); i++)
 		{
-			Console.Write($"{word.Render()} ");
+			Console.Write($"{_words[i].Render(IsHidden(i))} ");
 		}
 		Console.WriteLine();
 	}
@@ -34,9 +35,9 @@ class Scripture
 		while (hiddenWords < 3 && !IsAllHidden())
 		{
 			int index = _random.Next(_words.Count());
-			if (!_words[index].IsHidden())
+			if (!IsHidden(index))
 			{
-				_words[index].Hide();
+				_hiddenWords.Add(index);
 				hiddenWords += 1;
 			}
 		}
@@ -44,18 +45,18 @@ class Scripture
 
 	public void UnhideWords()
 	{
-
+		for (int i = 0; i < 3 && _hiddenWords.Count() > 0; i++) {
+			_hiddenWords.RemoveAt(_hiddenWords.Count()-1);
+		}
 	}
 
 	public bool IsAllHidden()
 	{
-		bool result = true;
+		return _words.Count() == _hiddenWords.Count();
+	}
 
-		foreach (Word word in _words)
-		{
-			result = result && word.IsHidden();
-		}
-
-		return result;
+	private bool IsHidden(int wordIndex)
+	{
+		return _hiddenWords.Contains(wordIndex);
 	}
 }
