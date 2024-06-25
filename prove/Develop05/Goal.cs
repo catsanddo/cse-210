@@ -11,4 +11,5 @@ abstract class Goal
 
 	public abstract int Mark();
 	public abstract void Display();
+	public abstract string Serialize();
 }

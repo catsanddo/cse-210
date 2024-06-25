@@ -42,4 +42,17 @@ class CountedGoal : Goal
 	{
 		Console.WriteLine($"[{_steps}/{_totalSteps}] {_description} ({_stepValue}/{_value})");
 	}
+	
+	public override string Serialize()
+	{
+		string result = "[CountedGoal]\r\n";
+
+		result += $"description = {_description}\r\n";
+		result += $"value = {_value}\r\n";
+		result += $"step-value = {_stepValue}\r\n";
+		result += $"steps = {_steps}\r\n";
+		result += $"total-steps = {_totalSteps}\r\n";
+
+		return result;
+	}
 }

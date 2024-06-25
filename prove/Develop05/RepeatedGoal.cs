@@ -23,4 +23,15 @@ class RepeatedGoal : Goal
 	{
 		Console.WriteLine($"[{_count}] {_description} ({_value})");
 	}
+
+	public override string Serialize()
+	{
+		string result = "[RepeatedGoal]\r\n";
+
+		result += $"description = {_description}\r\n";
+		result += $"value = {_value}\r\n";
+		result += $"count = {_count}\r\n";
+
+		return result;
+	}
 }

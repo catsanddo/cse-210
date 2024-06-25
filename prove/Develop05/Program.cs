@@ -13,8 +13,7 @@ class Program
         while (running)
         {
             Console.WriteLine();
-            Console.WriteLine("Main Menu:");
-            int userChoice = MenuSelect([
+            int userChoice = MenuSelect("Main Menu:", [
                 "1. View Profile",
                 "2. List Goals",
                 "3. Mark Goal",
@@ -41,7 +40,7 @@ class Program
             }
             else if (userChoice == 5)
             {
-                Console.WriteLine("Disk storage not implemented.");
+                DataMenu(user);
             }
             else if (userChoice == 6)
             {
@@ -52,8 +51,43 @@ class Program
         user.Save("user-data.ini");
         Console.WriteLine("Goodbye!");
     }
+
+    static private void DataMenu(UserProfile user)
+    {
+        bool inMenu = true;
+        while (inMenu)
+        {
+            Console.WriteLine();
+            int userChoice = MenuSelect("Data Management Menu:", [
+                "1. Export data",
+                "2. Import data",
+                "3. Exit",
+            ]);
+
+            if (userChoice == 1)
+            {
+                Console.Write("Enter the file to export to: ");
+                string filePath = Console.ReadLine();
+                user.Save(filePath);
+            }
+            else if (userChoice == 2)
+            {
+                Console.Write("Enter the file to import from: ");
+                string filePath = Console.ReadLine();
+                if (!File.Exists(filePath))
+                {
+                    Console.WriteLine($"File `{filePath}` does not exist!");
+                }
+                user.Load(filePath);
+            }
+            else if (userChoice == 3)
+            {
+                inMenu = false;
+            }
+        }
+    }
     
-    static public int MenuSelect(string[] choices)
+    static public int MenuSelect(string heading, string[] choices)
     {
         int choice = 0;
 
@@ -64,6 +98,7 @@ class Program
 
         while (choice < 1 || choice > choices.Count())
         {
+            Console.WriteLine(heading);
             foreach (string option in choices)
             {
                 Console.WriteLine($"\t{option}");

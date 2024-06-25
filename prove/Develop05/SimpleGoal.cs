@@ -1,32 +1,43 @@
 class SimpleGoal : Goal
 {
-	private bool _isCompleted;
+	private bool _isComplete;
 
 	public SimpleGoal(string description, int value) : base(description, value)
 	{
-		_isCompleted = false;
+		_isComplete = false;
 	}
 
-	public SimpleGoal(string description, int value, bool isCompleted) : base(description, value)
+	public SimpleGoal(string description, int value, bool isComplete) : base(description, value)
 	{
-		_isCompleted = isCompleted;
+		_isComplete = isComplete;
 	}
 
 	public override int Mark()
 	{
-		if (_isCompleted)
+		if (_isComplete)
 		{
 			Console.WriteLine("You already completed this goal.");
 			return 0;
 		}
 
-		_isCompleted = true;
+		_isComplete = true;
 		return _value;
 	}
 
 	public override void Display()
 	{
-		string mark = _isCompleted ? "X" : " ";
+		string mark = _isComplete ? "X" : " ";
 		Console.WriteLine($"[{mark}] {_description} ({_value})");
+	}
+
+	public override string Serialize()
+	{
+		string result = "[SimpleGoal]\r\n";
+
+		result += $"description = {_description}\r\n";
+		result += $"value = {_value}\r\n";
+		result += $"is-complete = {_isComplete}\r\n";
+
+		return result;
 	}
 }
