@@ -44,7 +44,7 @@ class UserProfile
 					if (c == '[')
 					{
 						state = "object";
-						// TODO: process previous object
+
 						if (objectName == "UserProfile")
 						{
 							bool success = true;
@@ -374,6 +374,26 @@ class UserProfile
 	public void Display()
 	{
 		Console.WriteLine($"Total points: {_points}");
+		if (_points < 1000)
+		{
+			Console.WriteLine("Rank: Novice");
+		}
+		else if (_points < 10000)
+		{
+			Console.WriteLine("Rank: Apprentice");
+		}
+		else if (_points < 100000)
+		{
+			Console.WriteLine("Rank: Journeyman");
+		}
+		else if (_points < 1000000)
+		{
+			Console.WriteLine("Rank: Expert");
+		}
+		else
+		{
+			Console.WriteLine("Rank: Master");
+		}
 	}
 
 	public void ListGoals()
@@ -402,7 +422,12 @@ class UserProfile
 			return;
 		}
 
-		int goalID = Program.GetNumberInput("Enter the goal's ID: ", 1, _goals.Count);
+		int goalID = Program.GetNumberInput("Enter the goal's ID (or 0 to cancel): ", 0, _goals.Count);
+
+		if (goalID == 0)
+		{
+			return;
+		}
 		
 		Goal goal = _goals[goalID-1];
 		_points += goal.Mark();

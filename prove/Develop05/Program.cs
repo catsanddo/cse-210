@@ -1,5 +1,13 @@
 using System;
 
+/* I exceeded requirements with a few changes to the structure of the program:
+ *  - different menu layouts
+ *  - automatic saving and loading
+ *  - manual exporting and importing of data in a submenu
+ *  - User profile option with points display
+ *  - User profile displays a "rank"
+ */
+
 class Program
 {
     static void Main(string[] args)
