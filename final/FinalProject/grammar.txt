@@ -1,0 +1,20 @@
+statement = assignment | expression ;
+
+assignment = symbol "=" expression ;
+function = symbol "(" symbol* ")" "=" expression ;
+
+expression = ternary ;
+ternary = term ( "?" term ":" ternary )? ;
+term = factor ( ( "+" | "-" ) factor )* ;
+factor = power ( ( "*" | "/" ) power )* ;
+power = unary ( "^" power )? ;
+unary = ( "-" unary ) | call ;
+call = primary ( "(" expression ( "," expression )* ")" )? ;
+primary = NUMBER | symbol | ( "(" expresion ")" );
+
+symbol = ALPHA ( ALPHA | DIGIT )* ;
+
+built-in functions:
+sqrt(n) = n ^ 0.5
+abs(n) = n < 0 ? -n : n
+input() = ASCII code from stdin
