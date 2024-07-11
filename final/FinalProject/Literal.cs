@@ -1,3 +1,4 @@
+// TODO: This class probably either requires renaming or an expansion
 class Literal : Expression
 {
     private double _value;
@@ -7,8 +8,8 @@ class Literal : Expression
         _value = value;
     }
 
-    public override double Evaluate()
+    public override Value Evaluate()
     {
-        return _value;
+        return new Value(_value);
     }
 }

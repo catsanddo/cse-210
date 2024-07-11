@@ -1,20 +1,44 @@
-statement = assignment | expression ;
+statement = function | expression ;
 
-assignment = symbol "=" expression ;
-function = symbol "(" symbol* ")" "=" expression ;
++function = "def" symbol "(" symbol* ")" "=" expression ;
 
-expression = ternary ;
-ternary = term ( "?" term ":" ternary )? ;
+(expression until condition) until condition
+
+expression = series ;
+series = loop ( "," loop)* ;
+loop = assignment ( "until" assignment )* ;
+assignment = ( "let" symbol "=" assignment ) | ternary ;
+ternary = logical ( "?" logical ":" ternary )? ;
+#ternary = logical ( "if" logical "else" ternary )? ;
+#ternary = ( "if" logical ":" ternary "else" ternary ) | logical ;
+logical = comparison ( ( "and" | "or" ) comparison )* ;
+comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
 term = factor ( ( "+" | "-" ) factor )* ;
 factor = power ( ( "*" | "/" ) power )* ;
 power = unary ( "^" power )? ;
-unary = ( "-" unary ) | call ;
-call = primary ( "(" expression ( "," expression )* ")" )? ;
-primary = NUMBER | symbol | ( "(" expresion ")" );
+unary = ( ( "-" | "!" ) unary ) | call ;
++call = primary ( "(" expression ( "," expression )* ")" )? ;
+#primary = NUMBER | symbol | ( "(" expression? ")" );
 
 symbol = ALPHA ( ALPHA | DIGIT )* ;
+
+Anything prefixed with a "+" is not yet implemented yet
+Anything prefixed with a "#" is partially implemented
+
+types:
+array
+double
+function
+nil
 
 built-in functions:
 sqrt(n) = n ^ 0.5
 abs(n) = n < 0 ? -n : n
+sin(n) = sin(n)
+cos(n) = cos(n)
+tan(n) = tan(n)
+asin(n) = asin(n)
+acos(n) = acos(n)
+atan(n) = atan(n)
 input() = ASCII code from stdin
+output(n) = write n to output as an ASCII code

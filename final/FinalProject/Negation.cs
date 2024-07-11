@@ -5,8 +5,14 @@ class Negation : Expression
         _left = operand;
     }
 
-    public override double Evaluate()
+    // TODO: consider other types
+    public override Value Evaluate()
     {
-        return -_left.Evaluate();
+        Value left = _left.Evaluate();
+        if (left.Type == ValueType.Number)
+        {
+            return new Value(-(double)(double)(double)left.GetNumber());
+        }
+        return new Value();
     }
 }

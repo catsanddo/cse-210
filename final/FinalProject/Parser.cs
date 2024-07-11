@@ -4,55 +4,188 @@ class Parser
     private int _current;
     private int _last;
     private Expression _root;
+    private State _state;
     // Idea for errors in parsing
     // Keep a list of erroneous Tokens; maybe paired with an error enum
     // Then report this info with something like a GetError() method
     // Maybe even just keep one error?
+    private List<string> _errorMsg;
 
-    public Parser(Token[] tokens)
+    public Parser(Token[] tokens, State state)
     {
         _tokens = tokens;
         _current = 0;
         _last = tokens.Length;
         _root = null;
+        _state = state;
+        _errorMsg = new();
     }
 
-    public double Parse()
+    public bool Parse(out Value result)
     {
         _root = MatchExpression();
-        if (_current < _tokens.Length)
+        Token error;
+        while ((error = GetToken()) != null)
         {
-            Console.WriteLine("Unexpected token :c");
-            return 0;
+            _errorMsg.Add($"Unexpected token '{error.GetLexeme()}' at {error.Offset}.");
         }
-        return _root.Evaluate();
+
+        if (_errorMsg.Count == 0)
+        {
+            result = _root.Evaluate();
+            return true;
+        }
+        
+        foreach (string error_msg in _errorMsg)
+        {
+            Console.WriteLine(error_msg);
+        }
+
+        result = new Value();
+        return false;
     }
 
     private Expression MatchExpression()
     {
+        return MatchSeries();
+    }
+
+    private Expression MatchSeries()
+    {
+        Expression root = MatchRepeat();
+
+        while (true)
+        {
+            if (Match(TokenType.Comma))
+            {
+                root = new Series(root, MatchRepeat());
+            }
+            else
+            {
+                return root;
+            }
+        }
+    }
+
+    private Expression MatchRepeat()
+    {
+        Expression root = MatchAssignment();
+
+        while (true)
+        {
+            if (Match(TokenType.Until))
+            {
+                root = new Repeat(root, MatchAssignment());
+            }
+            else
+            {
+                return root;
+            }
+        }
+    }
+
+    private Expression MatchAssignment()
+    {
+        if (Match(TokenType.Let))
+        {
+            Token symbol = GetToken();
+            if (symbol.Type != TokenType.Symbol)
+            {
+                _errorMsg.Add($"Expected symbol at {symbol.Offset}; got '{symbol.GetLexeme()}' instead.");
+                return new Literal(0);
+            }
+            if (!Match(TokenType.Equal))
+            {
+                _errorMsg.Add($"Expected '=' at {symbol.Offset}; got '{symbol.GetLexeme()}' instead.");
+                return new Literal(0);
+            }
+
+            return new Assignment(symbol.GetLexeme(), MatchAssignment(), _state);
+        }
+
         return MatchTernary();
     }
 
     private Expression MatchTernary()
     {
-        Expression condition = MatchTerm();
+        Expression condition = MatchLogical();
 
         if (Match(TokenType.Query))
         {
-            Expression left = MatchTerm();
+            Expression left = MatchLogical();
 
             if (!Match(TokenType.Colon))
             {
-                Console.WriteLine("Expected ':'");
+                Token error = GetToken();
+                _errorMsg.Add($"Expected ':' at {error.Offset}; found '{error.GetLexeme()}' instead.");
                 return new Literal(0);
             }
 
+            // Important: this should be MatchTernary() so it can recurse
             Expression right = MatchTernary();
 
             return new Ternary(condition, left, right);
         }
 
         return condition;
+    }
+
+    private Expression MatchLogical()
+    {
+        Expression root = MatchComparison();
+
+        while (true)
+        {
+            if (Match(TokenType.And))
+            {
+                root = new LogicalAnd(root, MatchComparison());
+            }
+            else if (Match(TokenType.Or))
+            {
+                root = new LogicalOr(root, MatchComparison());
+            }
+            else
+            {
+                return root;
+            }
+        }
+    }
+
+    private Expression MatchComparison()
+    {
+        Expression root = MatchTerm();
+
+        while (true)
+        {
+            if (Match(TokenType.Less))
+            {
+                root = new LessThan(root, MatchTerm());
+            }
+            else if (Match(TokenType.LessEqual))
+            {
+                root = new LessOrEqualTo(root, MatchTerm());
+            }
+            else if (Match(TokenType.Greater))
+            {
+                root = new GreaterThan(root, MatchTerm());
+            }
+            else if (Match(TokenType.GreaterEqual))
+            {
+                root = new GreaterOrEqualTo(root, MatchTerm());
+            }
+            else if (Match(TokenType.DoubleEqual))
+            {
+                root = new EqualTo(root, MatchTerm());
+            }
+            else if (Match(TokenType.BangEqual))
+            {
+                root = new LogicalNot(new EqualTo(root, MatchTerm()));
+            }
+            else
+            {
+                return root;
+            }
+        }
     }
 
     private Expression MatchTerm()
@@ -115,6 +248,10 @@ class Parser
         {
             return new Negation(MatchUnary());
         }
+        else if (Match(TokenType.Bang))
+        {
+            return new LogicalNot(MatchUnary());
+        }
         else
         {
             return MatchLiteral();
@@ -127,19 +264,33 @@ class Parser
         {
             return new Literal((double)GetToken().GetValue());
         }
+        else if (Peek()?.Type == TokenType.Symbol)
+        {
+            return new Symbol(GetToken().GetLexeme(), _state);
+        }
         else if (Match(TokenType.OpenParen))
         {
+            int openOffset = _tokens[_current-1].Offset;
             Expression expr = MatchExpression();
             if (!Match(TokenType.CloseParen))
             {
-                Console.WriteLine("Unmatched '('");
+                _errorMsg.Add($"Unmatched '(' at {openOffset}.");
                 return new Literal(0);
             }
             
             return expr;
         }
         else {
-            Console.WriteLine("Unexpected token :(");
+            // Token could be null if we reached the end of input
+            Token error = GetToken();
+            if (error == null)
+            {
+                _errorMsg.Add("Unexpected EOF.");
+            }
+            else
+            {
+                _errorMsg.Add($"Unexpected token '{error.GetLexeme()}' at {error.Offset}.");
+            }
             return new Literal(0);
         }
     }

@@ -4,6 +4,9 @@ class Program
 {
     static void Main(string[] args)
     {
+        // Global persistent state for the REPL
+        State state = new();
+        
         bool running = true;
         while (running)
         {
@@ -18,8 +21,13 @@ class Program
                 continue;
             }
             
-            Parser parser = new(tokens);
-            Console.WriteLine($"\t= {parser.Parse()}");
+            Parser parser = new(tokens, state);
+            Value result;
+            if (!parser.Parse(out result))
+            {
+                continue;
+            }
+            Console.WriteLine($"\t= {result}");
         }
     }
 }

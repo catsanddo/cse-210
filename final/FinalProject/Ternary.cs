@@ -9,9 +9,9 @@ class Ternary : Expression
         _right = right;
     }
 
-    public override double Evaluate()
+    public override Value Evaluate()
     {
-        if ((int)_condition.Evaluate() == 0)
+        if (_condition.Evaluate().GetNumber() == 0)
         {
             return _right.Evaluate();
         }

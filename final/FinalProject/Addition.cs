@@ -6,8 +6,15 @@ class Addition : Expression
         _right = right;
     }
 
-    public override double Evaluate()
+    // TODO: Support other types like vector addition
+    public override Value Evaluate()
     {
-        return _left.Evaluate() + _right.Evaluate();
+        Value left = _left.Evaluate();
+        Value right = _right.Evaluate();
+        if (left.Type == ValueType.Number && right.Type == ValueType.Number)
+        {
+            return new Value((double)left.GetNumber() + (double)right.GetNumber());
+        }
+        return new Value();
     }
 }

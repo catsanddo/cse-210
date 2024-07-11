@@ -1,6 +1,6 @@
-class Power : Expression
+class LessOrEqualTo : Expression
 {
-    public Power(Expression left, Expression right)
+    public LessOrEqualTo(Expression left, Expression right)
     {
         _left = left;
         _right = right;
@@ -13,7 +13,7 @@ class Power : Expression
         Value right = _right.Evaluate();
         if (left.Type == ValueType.Number && right.Type == ValueType.Number)
         {
-            return new Value(Math.Pow((double)left.GetNumber(), (double)right.GetNumber()));
+            return new Value(left.GetNumber() <= right.GetNumber() ? 1 : 0);
         }
         return new Value();
     }
