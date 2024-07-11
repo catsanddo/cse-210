@@ -1,26 +1,33 @@
-statement = function | expression ;
++program = expression ;
 
-+function = "def" symbol "(" symbol* ")" "=" expression ;
++expression = series ;
++series = assignment ( "," assignment)* ;
++assignment = ( reference "=" assignment ) | loop ;
++loop = ternary ( "until" ternary )* ;
++ternary = logical ( "?" logical ":" ternary )? ;
++logical = comparison ( ( "and" | "or" ) comparison )* ;
++comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
++term = factor ( ( "+" | "-" ) factor )* ;
++factor = power ( ( "*" | "/" ) power )* ;
++power = append ( "^" power )? ;
++append = unary ( "<<" unary )* ;
++unary = ( ( "-" | "!" ) unary ) | suffix ;
++suffix = ( suffix ( "(" arguments ")" ) | index ) | primary ;
++suffix = primary ( ( "(" arguments ")" ) | index )* ;
++primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
 
-(expression until condition) until condition
++reference = identifier index? ;
++arguments = ( assignment ( "," assignment )* )? ;
++index = "[" assignment "]" ;
 
-expression = series ;
-series = loop ( "," loop)* ;
-loop = assignment ( "until" assignment )* ;
-assignment = ( "let" symbol "=" assignment ) | ternary ;
-ternary = logical ( "?" logical ":" ternary )? ;
-#ternary = logical ( "if" logical "else" ternary )? ;
-#ternary = ( "if" logical ":" ternary "else" ternary ) | logical ;
-logical = comparison ( ( "and" | "or" ) comparison )* ;
-comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
-term = factor ( ( "+" | "-" ) factor )* ;
-factor = power ( ( "*" | "/" ) power )* ;
-power = unary ( "^" power )? ;
-unary = ( ( "-" | "!" ) unary ) | call ;
-+call = primary ( "(" expression ( "," expression )* ")" )? ;
-#primary = NUMBER | symbol | ( "(" expression? ")" );
++identifier = ALPHA ( ALPHA | DIGIT )* ;
++function = "{" identifier* "}" assignment ;
 
-symbol = ALPHA ( ALPHA | DIGIT )* ;
+ALPHA = ("a" ... "z" ) | ( "A" ... "Z" ) | "_" ;
+DIGIT = "0" ... "9" ;
++STRING = """ character* """ ;
++character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ | "x" hex hex ) ) ;
++hex = ( "a" ... "f" ) | ( "A" ... "F" ) | digit ;
 
 Anything prefixed with a "+" is not yet implemented yet
 Anything prefixed with a "#" is partially implemented
