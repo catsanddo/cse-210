@@ -62,6 +62,23 @@ class Value
         return _number;
     }
 
+    public bool IsTruthy()
+    {
+        if (_type == ValueType.Number)
+        {
+            return _number != 0;
+        }
+        else if (_type == ValueType.Array)
+        {
+            return _array.Length != 0;
+        }
+        else if (_type == ValueType.Nil)
+        {
+            return false;
+        }
+        return true;
+    }
+
     public bool IsCallable()
     {
         // TODO: check if _builtinName exists as a valid builtin

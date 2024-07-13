@@ -332,18 +332,6 @@ class Scanner
                     b = '"';
                     break;
 
-                    // TODO: create explicit number ender; allow for decimals
-                    case 'N':
-                    string rawNumber = "";
-                    while (IsDigit(lexeme[i+1]) && i < lexeme.Length - 1)
-                    {
-                        rawNumber += lexeme[++i];
-                    }
-                    double number;
-                    double.TryParse(rawNumber, out number);
-                    result.Add(number);
-                    continue;
-
                     // Just send the backslash along and save the next char for next time
                     default:
                     i -= 1;

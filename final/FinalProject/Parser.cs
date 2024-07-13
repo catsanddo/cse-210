@@ -85,23 +85,53 @@ class Parser
 
     public Expression ParseFactor()
     {
-        Expression left = ParseLiteral();
+        Expression left = ParseAppend();
 
         while (true)
         {
             if (_scanner.MatchToken(TokenType.Star))
             {
-                left = new Multiplication(left, ParseFactor());
+                left = new Multiplication(left, ParseAppend());
             }
             else if (_scanner.MatchToken(TokenType.Slash))
             {
-                left = new Division(left, ParseFactor());
+                left = new Division(left, ParseAppend());
             }
             else
             {
                 return left;
             }
         }
+    }
+
+    public Expression ParseAppend()
+    {
+        Expression left = ParseUnary();
+
+        while (true)
+        {
+            if (_scanner.MatchToken(TokenType.LessLess))
+            {
+                left = new Append(left, ParseUnary());
+            }
+            else
+            {
+                return left;
+            }
+        }
+    }
+
+    public Expression ParseUnary()
+    {
+        if (_scanner.MatchToken(TokenType.Minus))
+        {
+            return new Negation(ParseUnary());
+        }
+        else if (_scanner.MatchToken(TokenType.Bang))
+        {
+            return new LogicalNot(ParseUnary());
+        }
+        return ParseLiteral();
     }
 
     public Expression ParseLiteral()

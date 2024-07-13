@@ -10,9 +10,8 @@
 term = factor ( ( "+" | "-" ) factor )* ;
 factor = power ( ( "*" | "/" ) power )* ;
 +power = append ( "^" power )? ;
-+append = unary ( "<<" unary )* ;
-+unary = ( ( "-" | "!" ) unary ) | suffix ;
-+suffix = ( suffix ( "(" arguments ")" ) | index ) | primary ;
+append = unary ( "<<" unary )* ;
+unary = ( ( "-" | "!" ) unary ) | suffix ;
 +suffix = primary ( ( "(" arguments ")" ) | index )* ;
 #primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
 
@@ -20,14 +19,13 @@ factor = power ( ( "*" | "/" ) power )* ;
 +arguments = ( assignment ( "," assignment )* )? ;
 +index = "[" assignment "]" ;
 
-+identifier = ALPHA ( ALPHA | DIGIT )* ;
+identifier = ALPHA ( ALPHA | DIGIT )* ;
 +function = "{" identifier* "}" assignment ;
 
 ALPHA = ("a" ... "z" ) | ( "A" ... "Z" ) | "_" ;
 DIGIT = "0" ... "9" ;
-+STRING = """ character* """ ;
-+character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ | "x" hex hex ) ) ;
-+hex = ( "a" ... "f" ) | ( "A" ... "F" ) | digit ;
+STRING = """ character* """ ;
+#character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ | "x" hex hex ) ) ;
 
 Anything prefixed with a "+" is not yet implemented yet
 Anything prefixed with a "#" is partially implemented
