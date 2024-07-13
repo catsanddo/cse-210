@@ -1,20 +1,20 @@
-+program = expression ;
+#program = expression ;
 
-+expression = series ;
+#expression = series ;
 +series = assignment ( "," assignment)* ;
 +assignment = ( reference "=" assignment ) | loop ;
 +loop = ternary ( "until" ternary )* ;
 +ternary = logical ( "?" logical ":" ternary )? ;
 +logical = comparison ( ( "and" | "or" ) comparison )* ;
 +comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
-+term = factor ( ( "+" | "-" ) factor )* ;
-+factor = power ( ( "*" | "/" ) power )* ;
+term = factor ( ( "+" | "-" ) factor )* ;
+factor = power ( ( "*" | "/" ) power )* ;
 +power = append ( "^" power )? ;
 +append = unary ( "<<" unary )* ;
 +unary = ( ( "-" | "!" ) unary ) | suffix ;
 +suffix = ( suffix ( "(" arguments ")" ) | index ) | primary ;
 +suffix = primary ( ( "(" arguments ")" ) | index )* ;
-+primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
+#primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
 
 +reference = identifier index? ;
 +arguments = ( assignment ( "," assignment )* )? ;

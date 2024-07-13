@@ -88,7 +88,13 @@ class Value
         switch (_type)
         {
             case ValueType.Array:
-            return $"{_array}";
+            string array = "{";
+            foreach (double number in _array)
+            {
+                array += $"{number}, ";
+            }
+            array = array.Substring(0, array.Length-2) + "}";
+            return array;
 
             case ValueType.Number:
             return $"{_number}";

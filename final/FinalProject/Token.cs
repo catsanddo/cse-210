@@ -11,6 +11,11 @@ class Token
     {
         get { return _type; }
     }
+
+    public int Offset
+    {
+        get { return _startOffset; }
+    }
     
     public Token(TokenType type, string lexeme, int offset)
     {

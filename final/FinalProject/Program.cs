@@ -5,29 +5,24 @@ class Program
 {
     static void Main(string[] args)
     {
+        Parser parser = new Parser(null);
+        
         if (args.Length != 0 && File.Exists(args[0]))
         {
-            Scanner scanner = new Scanner(File.OpenText(args[0]));
-            Token token;
-            while ((token = scanner.GetToken()) != null)
-            {
-                Console.WriteLine(token.GetLexeme());
-            }
+            parser = new Parser(File.OpenText(args[0]));
+            Value result = parser.Parse();
+            Console.WriteLine(result);
             return;
         }
-        
+
         while (true)
         {
             Console.Write("> ");
             string input = Console.ReadLine();
             
-            Scanner scanner = new Scanner(input);
-            Token token;
-            while ((token = scanner.GetToken()) != null)
-            {
-                Console.Write("\t");
-                Console.WriteLine(token.GetLexeme());
-            }
+            parser.FeedLine(input);
+            Value result = parser.Parse();
+            Console.WriteLine($"  -> {result}");
         }
     }
 }

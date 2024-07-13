@@ -1,7 +1,7 @@
 abstract class Expression
 {
-    Expression _left;
-    Expression _right;
+    protected Expression _left;
+    protected Expression _right;
 
     public abstract Value Evaluate();
 }

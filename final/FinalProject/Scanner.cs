@@ -8,6 +8,7 @@ class Scanner
     private StreamReader _reader;
     private Dictionary<string,TokenType> _keywords;
     private Token _buffer;
+    // TODO: Add a newline table
 
     public Scanner(string source)
     {
@@ -184,11 +185,31 @@ class Scanner
             else if (c == '"')
             {
                 // Parse ASCII string literal as array of numbers
-                UngetChar(c);
-                int offset = _offset;
+                int offset = _offset-1;
                 string lexeme;
                 double[] array = ConsumeArray(out lexeme);
-                return new Token(array, lexeme, offset);
+                if (array != null)
+                {
+                    return new Token(array, lexeme, offset);
+                }
+                else
+                {
+                    return new Token(TokenType.Invalid, lexeme, offset);
+                }
+            }
+            else if (c == '\'')
+            {
+                int offset = _offset-1;
+                string lexeme;
+                double? number = ConsumeCharacter(out lexeme);
+                if (number != null)
+                {
+                    return new Token((double)number, lexeme, offset);
+                }
+                else
+                {
+                    return new Token(TokenType.Invalid, lexeme, offset);
+                }
             }
             else if (IsAlpha(c))
             {
@@ -223,11 +244,6 @@ class Scanner
     private bool IsAlpha(char c)
     {
         return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || c == '_';
-    }
-
-    private bool IsHex(char c)
-    {
-        return IsDigit(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
     }
 
     private bool IsValid(char c)
@@ -266,11 +282,144 @@ class Scanner
         return result;
     }
 
-    // TODO: parse that string!
     private double[] ConsumeArray(out string lexeme)
     {
-        lexeme = "";
-        return null;
+        List<double> result = new();
+        lexeme = "\"";
+
+        char? c;
+        while ((c = GetChar()) != null && c != '"')
+        {
+            // Allow for escaping quotes
+            // But make sure not to count \\"
+            if (c == '\\' && PeekChar() == '\\')
+            {
+                lexeme += c;
+                c = GetChar();
+            }
+            else if (c == '\\' && PeekChar() == '"')
+            {
+                lexeme += c;
+                c = GetChar();
+            }
+            lexeme += c;
+        }
+
+        // Unended string literal; will become invalid token
+        if (c == null)
+        {
+            return null;
+        }
+        lexeme += c;
+        
+        for (int i = 1; i < lexeme.Length - 1; ++i)
+        {
+            char b = lexeme[i];
+            if (b == '\\')
+            {
+                // We know that if we have a backslash the next char is not the ending quote
+                switch (lexeme[++i])
+                {
+                    case '\\':
+                    // b = '\\'; b is already this
+                    break;
+
+                    case 'n':
+                    b = '\n';
+                    break;
+
+                    case '"':
+                    b = '"';
+                    break;
+
+                    // TODO: create explicit number ender; allow for decimals
+                    case 'N':
+                    string rawNumber = "";
+                    while (IsDigit(lexeme[i+1]) && i < lexeme.Length - 1)
+                    {
+                        rawNumber += lexeme[++i];
+                    }
+                    double number;
+                    double.TryParse(rawNumber, out number);
+                    result.Add(number);
+                    continue;
+
+                    // Just send the backslash along and save the next char for next time
+                    default:
+                    i -= 1;
+                    break;
+                }
+            }
+            result.Add((double)b);
+        }
+
+        return result.ToArray();
+    }
+    
+    private double? ConsumeCharacter(out string lexeme)
+    {
+        char result;
+        lexeme = "\'";
+
+        if (PeekChar() == null)
+        {
+            return null;
+        }
+        else if (MatchChar('\''))
+        {
+            lexeme += "\'";
+            return null;
+        }
+        
+        char? c = GetChar();
+        if (c == null)
+        {
+            return null;
+        }
+        else if (c == '\\')
+        {
+            lexeme += c;
+            c = GetChar();
+            if (c == null)
+            {
+                return null;
+            }
+        }
+        lexeme += c;
+
+        if (!MatchChar('\''))
+        {
+            return null;
+        }
+        lexeme += "\'";
+
+        if (lexeme[1] == '\\')
+        {
+            switch (lexeme[2])
+            {
+                case '\\':
+                result = '\\';
+                break;
+
+                case 'n':
+                result = '\n';
+                break;
+
+                case '\'':
+                result = '\'';
+                break;
+
+                default:
+                result = lexeme[2];
+                break;
+            }
+        }
+        else
+        {
+            result = lexeme[1];
+        }
+
+        return (double)result;
     }
 
     private string ConsumeIdentifier()
@@ -301,10 +450,15 @@ class Scanner
 
     private char? GetChar()
     {
+        if (_source == null)
+        {
+            return null;
+        }
         if (_reader != null && _localOffset >= _source.Length)
         {
             _localOffset = 0;
             _source = _reader.ReadLine();
+            return GetChar();
         }
         if (_localOffset < _source.Length)
         {
@@ -317,10 +471,15 @@ class Scanner
 
     private char? PeekChar()
     {
+        if (_source == null)
+        {
+            return null;
+        }
         if (_reader != null && _localOffset >= _source.Length)
         {
             _localOffset = 0;
             _source = _reader.ReadLine();
+            return PeekChar();
         }
         if (_localOffset < _source.Length)
         {
@@ -335,6 +494,10 @@ class Scanner
         _offset -= 1;
         if (_source.Length == 0)
         {
+            if (_source == null)
+            {
+                _source = "";
+            }
             _source += c;
             return;
         }
