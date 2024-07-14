@@ -9,7 +9,7 @@
 +comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
 term = factor ( ( "+" | "-" ) factor )* ;
 factor = power ( ( "*" | "/" ) power )* ;
-+power = append ( "^" power )? ;
+power = append ( "^" power )? ;
 append = unary ( "<<" unary )* ;
 unary = ( ( "-" | "!" ) unary ) | suffix ;
 +suffix = primary ( ( "(" arguments ")" ) | index )* ;
@@ -25,7 +25,7 @@ identifier = ALPHA ( ALPHA | DIGIT )* ;
 ALPHA = ("a" ... "z" ) | ( "A" ... "Z" ) | "_" ;
 DIGIT = "0" ... "9" ;
 STRING = """ character* """ ;
-#character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ | "x" hex hex ) ) ;
+#character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ ) ) ;
 
 Anything prefixed with a "+" is not yet implemented yet
 Anything prefixed with a "#" is partially implemented

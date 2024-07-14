@@ -85,23 +85,35 @@ class Parser
 
     public Expression ParseFactor()
     {
-        Expression left = ParseAppend();
+        Expression left = ParsePower();
 
         while (true)
         {
             if (_scanner.MatchToken(TokenType.Star))
             {
-                left = new Multiplication(left, ParseAppend());
+                left = new Multiplication(left, ParsePower());
             }
             else if (_scanner.MatchToken(TokenType.Slash))
             {
-                left = new Division(left, ParseAppend());
+                left = new Division(left, ParsePower());
             }
             else
             {
                 return left;
             }
         }
+    }
+
+    public Expression ParsePower()
+    {
+        Expression left = ParseAppend();
+
+        if (_scanner.MatchToken(TokenType.Caret))
+        {
+            return new Power(left, ParsePower());
+        }
+
+        return left;
     }
 
     public Expression ParseAppend()
