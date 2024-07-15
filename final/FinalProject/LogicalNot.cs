@@ -10,7 +10,7 @@ class LogicalNot : Expression
         Value result = _left.Evaluate();
         if (result.IsTruthy())
         {
-            return new Value(0);
+            return new Value((double)0);
         }
         return new Value(1);
     }

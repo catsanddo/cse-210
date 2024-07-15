@@ -6,7 +6,7 @@ class Value
     private double _number;
     private string[] _paramList;
     private Expression _body;
-    private string _builtinName;
+    private Builtin.Id _builtinId;
 
     public ValueType Type
     {
@@ -37,11 +37,10 @@ class Value
         _body = body;
     }
     
-    public Value(string[] paramList, string body)
+    public Value(Builtin.Id body)
     {
         _type = ValueType.Builtin;
-        _paramList = paramList;
-        _builtinName = body;
+        _builtinId = body;
     }
 
     public double[] GetArray()
@@ -87,8 +86,21 @@ class Value
 
     public Value Call(Expression[] args, State state)
     {
-        // Handle calling non-callable and builtins
+        if (_type == ValueType.Builtin)
+        {
+            List<Value> builtinArgs = new();
+            foreach (Expression arg in args)
+            {
+                builtinArgs.Add(arg.Evaluate());
+            }
+            return Builtin.Execute(_builtinId, builtinArgs.ToArray());
+        }
+        
         state.PushFrame();
+        if (args.Length != _paramList.Length)
+        {
+            throw new RuntimeException($"Expected {_paramList.Length} arguments; got {args.Length}.");
+        }
         for (int i = 0; i < _paramList.Length; ++i)
         {
             // TODO: handle mismatch in arg/param list size
@@ -125,7 +137,7 @@ class Value
             return $"<function>{{{parameters.Trim()}}}";
 
             case ValueType.Builtin:
-            return $"<builtin:{_builtinName}>";
+            return $"<builtin:{_builtinId}>";
 
             default:
             return "<nil>";

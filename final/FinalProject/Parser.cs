@@ -143,10 +143,54 @@ class Parser
         {
             return new LogicalNot(ParseUnary());
         }
-        return ParseLiteral();
+        return ParseSuffix();
     }
 
-    public Expression ParseLiteral()
+    public Expression ParseSuffix()
+    {
+        Expression left = ParsePrimary();
+
+        while (true)
+        {
+            if (_scanner.PeekToken()?.Type == TokenType.LeftBracket)
+            {
+                Token open = _scanner.GetToken();
+                Expression index = ParseTerm();
+                if (!_scanner.MatchToken(TokenType.RightBracket))
+                {
+                    _errors.Add($"Unmatched '[' at {open.Offset}.");
+                    return new Literal(new Value());
+                }
+                return new Index(left, index);
+            }
+            else if (_scanner.PeekToken()?.Type == TokenType.LeftParen)
+            {
+                Token open = _scanner.GetToken();
+                List<Expression> arguments = new();
+                
+                if (_scanner.PeekToken()?.Type != TokenType.RightParen)
+                {
+                    arguments.Add(ParseTerm());
+                }
+                while (_scanner.MatchToken(TokenType.Comma))
+                {
+                    arguments.Add(ParseTerm());
+                }
+                if (!_scanner.MatchToken(TokenType.RightParen))
+                {
+                    _errors.Add($"Unmatched '(' at {open.Offset}.");
+                    return new Literal(new Value());
+                }
+                return new Call(left, arguments.ToArray(), _state);
+            }
+            else
+            {
+                return left;
+            }
+        }
+    }
+
+    public Expression ParsePrimary()
     {
         if (_scanner.PeekToken()?.Type == TokenType.Number)
         {

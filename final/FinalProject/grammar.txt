@@ -2,6 +2,7 @@
 
 #expression = series ;
 +series = assignment ( "," assignment)* ;
++assignment = loop ( "=" assignment )? ;
 +assignment = ( reference "=" assignment ) | loop ;
 +loop = ternary ( "until" ternary )* ;
 +ternary = logical ( "?" logical ":" ternary )? ;
@@ -12,7 +13,7 @@ factor = power ( ( "*" | "/" ) power )* ;
 power = append ( "^" power )? ;
 append = unary ( "<<" unary )* ;
 unary = ( ( "-" | "!" ) unary ) | suffix ;
-+suffix = primary ( ( "(" arguments ")" ) | index )* ;
+suffix = primary ( ( "(" arguments ")" ) | index )* ;
 #primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
 
 +reference = identifier index? ;
@@ -47,3 +48,4 @@ acos(n) = acos(n)
 atan(n) = atan(n)
 input() = ASCII code from stdin
 output(n) = write n to output as an ASCII code
+quit() = exit program
