@@ -210,6 +210,24 @@ class Parser
         {
             return new Identifier(_scanner.GetToken().GetLexeme(), _state);
         }
+        else if (_scanner.PeekToken()?.Type == TokenType.LeftBrace)
+        {
+            Token open = _scanner.GetToken();
+            List<string> parameters = new();
+            while (!_scanner.MatchToken(TokenType.RightBrace))
+            {
+                Token parameter = _scanner.GetToken();
+                if (parameter.Type != TokenType.Identifier)
+                {
+                    _errors.Add($"Expected identifier at {parameter.Offset}; got {parameter.Type} instead.");
+                    return new Literal(new Value());
+                }
+                parameters.Add(parameter.GetLexeme());
+            }
+            Expression body = ParseTerm();
+            
+            return new Literal(new Value(parameters.ToArray(), body));
+        }
         else if (_scanner.PeekToken()?.Type == TokenType.LeftParen)
         {
             Token paren = _scanner.GetToken();

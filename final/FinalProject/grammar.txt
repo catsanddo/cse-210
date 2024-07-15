@@ -14,19 +14,18 @@ power = append ( "^" power )? ;
 append = unary ( "<<" unary )* ;
 unary = ( ( "-" | "!" ) unary ) | suffix ;
 suffix = primary ( ( "(" arguments ")" ) | index )* ;
-#primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
+primary = NUMBER | identifier | STRING | function | ( "(" expression ")" ) | "nil" ;
 
-+reference = identifier index? ;
-+arguments = ( assignment ( "," assignment )* )? ;
-+index = "[" assignment "]" ;
+arguments = ( assignment ( "," assignment )* )? ;
+index = "[" assignment "]" ;
 
 identifier = ALPHA ( ALPHA | DIGIT )* ;
-+function = "{" identifier* "}" assignment ;
+function = "{" identifier* "}" assignment ;
 
 ALPHA = ("a" ... "z" ) | ( "A" ... "Z" ) | "_" ;
 DIGIT = "0" ... "9" ;
 STRING = """ character* """ ;
-#character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ ) ) ;
+character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ ) ) ;
 
 Anything prefixed with a "+" is not yet implemented yet
 Anything prefixed with a "#" is partially implemented
