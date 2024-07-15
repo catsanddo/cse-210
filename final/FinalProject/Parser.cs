@@ -59,7 +59,19 @@ class Parser
 
     public Expression ParseExpression()
     {
-        return ParseTerm();
+        return ParseAssignment();
+    }
+
+    public Expression ParseAssignment()
+    {
+        Expression left = ParseTerm();
+
+        if (_scanner.MatchToken(TokenType.Equal))
+        {
+            return new Assignment(left, ParseAssignment());
+        }
+
+        return left;
     }
 
     public Expression ParseTerm()
@@ -155,7 +167,7 @@ class Parser
             if (_scanner.PeekToken()?.Type == TokenType.LeftBracket)
             {
                 Token open = _scanner.GetToken();
-                Expression index = ParseTerm();
+                Expression index = ParseAssignment();
                 if (!_scanner.MatchToken(TokenType.RightBracket))
                 {
                     _errors.Add($"Unmatched '[' at {open.Offset}.");
@@ -170,11 +182,11 @@ class Parser
                 
                 if (_scanner.PeekToken()?.Type != TokenType.RightParen)
                 {
-                    arguments.Add(ParseTerm());
+                    arguments.Add(ParseAssignment());
                 }
                 while (_scanner.MatchToken(TokenType.Comma))
                 {
-                    arguments.Add(ParseTerm());
+                    arguments.Add(ParseAssignment());
                 }
                 if (!_scanner.MatchToken(TokenType.RightParen))
                 {
@@ -224,7 +236,7 @@ class Parser
                 }
                 parameters.Add(parameter.GetLexeme());
             }
-            Expression body = ParseTerm();
+            Expression body = ParseAssignment();
             
             return new Literal(new Value(parameters.ToArray(), body));
         }

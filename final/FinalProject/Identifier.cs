@@ -13,4 +13,10 @@ class Identifier : Expression
     {
         return _state.GetValue(_name);
     }
+
+    public override Value Assign(Value value)
+    {
+        _state.SetValue(_name, value);
+        return value;
+    }
 }

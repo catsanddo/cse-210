@@ -22,4 +22,23 @@ class Index : Expression
         }
         throw new RuntimeException($"Unsupported operation '[]' on {left.Type} and {right.Type}.");
     }
+
+    public override Value Assign(Value value)
+    {
+        Value left = _left.Evaluate();
+        Value right = _right.Evaluate();
+        if (left.Type == ValueType.Array && right.Type == ValueType.Number &&
+            value.Type == ValueType.Number)
+        {
+            double[] array = left.GetArray();
+            int index = (int)right.GetNumber();
+            if (index < 0 || index >= array.Length)
+            {
+                throw new RuntimeException($"Array access out of bounds ({index}).");
+            }
+            array[index] = (double)value.GetNumber();
+            return left;
+        }
+        throw new RuntimeException($"Unsupported operation '[]' on {left.Type} and {right.Type}.");
+    }
 }

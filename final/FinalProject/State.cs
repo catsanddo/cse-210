@@ -41,6 +41,7 @@ class State
         if (_localFrames.Count == 0)
         {
             _global[name] = value;
+            return;
         }
         _localFrames[_localFrames.Count-1][name] = value;
     }

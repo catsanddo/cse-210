@@ -86,14 +86,16 @@ class Value
 
     public Value Call(Expression[] args, State state)
     {
+        Value[] evaluatedArgs = new Value[args.Length];
+
+        for (int i = 0; i < args.Length; ++i)
+        {
+            evaluatedArgs[i] = args[i].Evaluate();
+        }
+        
         if (_type == ValueType.Builtin)
         {
-            List<Value> builtinArgs = new();
-            foreach (Expression arg in args)
-            {
-                builtinArgs.Add(arg.Evaluate());
-            }
-            return Builtin.Execute(_builtinId, builtinArgs.ToArray());
+            return Builtin.Execute(_builtinId, evaluatedArgs);
         }
         
         state.PushFrame();
@@ -103,8 +105,7 @@ class Value
         }
         for (int i = 0; i < _paramList.Length; ++i)
         {
-            // TODO: handle mismatch in arg/param list size
-            state.SetValue(_paramList[i], args[i].Evaluate());
+            state.SetValue(_paramList[i], evaluatedArgs[i]);
         }
         Value result = _body.Evaluate();
         state.PopFrame();
