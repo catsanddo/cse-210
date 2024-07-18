@@ -64,7 +64,7 @@ class Parser
 
     public Expression ParseAssignment()
     {
-        Expression left = ParseTerm();
+        Expression left = ParseComparison();
 
         if (_scanner.MatchToken(TokenType.Equal))
         {
@@ -72,6 +72,43 @@ class Parser
         }
 
         return left;
+    }
+
+    public Expression ParseComparison()
+    {
+        Expression left = ParseTerm();
+
+        while (true)
+        {
+            if (_scanner.MatchToken(TokenType.DoubleEqual))
+            {
+                left = new EqualTo(left, ParseTerm());
+            }
+            else if (_scanner.MatchToken(TokenType.BangEqual))
+            {
+                left = new LogicalNot(new EqualTo(left, ParseTerm()));
+            }
+            else if (_scanner.MatchToken(TokenType.Less))
+            {
+                left = new LessThan(left, ParseTerm());
+            }
+            else if (_scanner.MatchToken(TokenType.LessEqual))
+            {
+                left = new LessOrEqualTo(left, ParseTerm());
+            }
+            else if (_scanner.MatchToken(TokenType.Greater))
+            {
+                left = new LessThan(ParseTerm(), left);
+            }
+            else if (_scanner.MatchToken(TokenType.GreaterEqual))
+            {
+                left = new LessOrEqualTo(ParseTerm(), left);
+            }
+            else
+            {
+                return left;
+            }
+        }
     }
 
     public Expression ParseTerm()
@@ -251,7 +288,6 @@ class Parser
             }
             return expr;
         }
-        // TODO: function literals
         
         if (_scanner.PeekToken()?.Type == TokenType.Invalid)
         {

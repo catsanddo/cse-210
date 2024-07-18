@@ -2,12 +2,11 @@
 
 #expression = series ;
 +series = assignment ( "," assignment)* ;
-+assignment = loop ( "=" assignment )? ;
-+assignment = ( reference "=" assignment ) | loop ;
+assignment = loop ( "=" assignment )? ;
 +loop = ternary ( "until" ternary )* ;
 +ternary = logical ( "?" logical ":" ternary )? ;
 +logical = comparison ( ( "and" | "or" ) comparison )* ;
-+comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
+comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
 term = factor ( ( "+" | "-" ) factor )* ;
 factor = power ( ( "*" | "/" ) power )* ;
 power = append ( "^" power )? ;

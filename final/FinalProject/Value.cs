@@ -113,6 +113,83 @@ class Value
         return result;
     }
 
+    public bool Equals(Value other)
+    {
+        if (_type != other._type)
+        {
+            return false;
+        }
+        switch (_type)
+        {
+            case ValueType.Nil:
+            return true;
+
+            case ValueType.Number:
+            return _number == other._number;
+
+            case ValueType.Array:
+            if (_array.Length != other._array.Length)
+            {
+                return false;
+            }
+            for (int i = 0; i < _array.Length; ++i)
+            {
+                if (_array[i] != other._array[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+
+            case ValueType.Function:
+            return _body == other._body;
+
+            case ValueType.Builtin:
+            return _builtinId == other._builtinId;
+        }
+
+        return false;
+    }
+
+    public bool LessThan(Value other)
+    {
+        if (_type != other._type)
+        {
+            return false;
+        }
+        switch (_type)
+        {
+            case ValueType.Nil:
+            return false;
+
+            case ValueType.Number:
+            return _number < other._number;
+
+            case ValueType.Array:
+            int length = Math.Min(_array.Length, other._array.Length);
+            for (int i = 0; i < length; ++i)
+            {
+                if (_array[i] > other._array[i])
+                {
+                    return false;
+                }
+            }
+            if (_array.Length > other._array.Length)
+            {
+                return false;
+            }
+            return !Equals(other);
+
+            case ValueType.Function:
+            return false;
+
+            case ValueType.Builtin:
+            return false;
+        }
+
+        return false;
+    }
+
     public override string ToString()
     {
         switch (_type)
