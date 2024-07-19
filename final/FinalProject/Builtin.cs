@@ -8,6 +8,10 @@ static class Builtin
             return Sqrt(arguments);
             case Id.Abs:
             return Abs(arguments);
+            case Id.Len:
+            return Len(arguments);
+            case Id.Dim:
+            return Dim(arguments);
             case Id.Sin:
             return Sin(arguments);
             case Id.Cos:
@@ -59,6 +63,23 @@ static class Builtin
         AssertArgLength(1, arguments);
         AssertArgType(arguments[0], ValueType.Number);
         return new Value(Math.Abs((double)arguments[0].GetNumber()));
+    }
+    
+    static private Value Len(Value[] arguments)
+    {
+        AssertArgLength(1, arguments);
+        AssertArgType(arguments[0], ValueType.Array);
+        int length = arguments[0].GetArray().Length;
+        return new Value((double)length);
+    }
+    
+    static private Value Dim(Value[] arguments)
+    {
+        AssertArgLength(1, arguments);
+        AssertArgType(arguments[0], ValueType.Number);
+        int length = (int)arguments[0].GetNumber();
+        double[] array = new double[length];
+        return new Value(array);
     }
 
     static private Value Sin(Value[] arguments)
@@ -151,6 +172,8 @@ static class Builtin
     {
         Sqrt,
         Abs,
+        Len,
+        Dim,
         Sin,
         Cos,
         Tan,

@@ -1,59 +1,61 @@
-let read_line() = (
-	let buffer = dim(0),
-	let in = input(),
+read_line = {} (
+	buffer = dim(0),
 	output("> "),
+	in = input(),
 	(
-		let buffer = buffer + input()
+		buffer = buffer << in,
 		in = input()
 	) until in == '\n',
 	buffer
 ),
 
-let find_end(buffer, ip) = (
-	let depth = 0,
-	let current = 0,
+find_end = {buffer _ip} (
+	depth = 0,
+	current = 0,
 	(
-		let current = buffer[ip],
-		let depth = depth + (current == '[' ? 1 : 0),
-		let depth = depth - (current == ']' ? 1 : 0),
-		let ip = ip + 1
-	) until current == ']' and depth == 0
+		current = buffer[_ip],
+		depth = depth + (current == '[' ? 1 : 0),
+		depth = depth - (current == ']' ? 1 : 0),
+		_ip = _ip + 1
+	) until current == ']' and depth == 0,
+	_ip - 1
 ),
 
-let find_start(buffer, ip) = (
-	let depth = 0,
-	let current = 0,
+find_start = {buffer _ip} (
+	depth = 0,
+	current = 0,
 	(
-		let current = buffer[ip],
-		let depth = depth + (current == ']' ? 1 : 0),
-		let depth = depth - (current == '[' ? 1 : 0),
-		let ip = ip - 1
+		current = buffer[_ip],
+		depth = depth + (current == ']' ? 1 : 0),
+		depth = depth - (current == '[' ? 1 : 0),
+		_ip = _ip - 1
 	) until current == '[' and depth == 0,
-	ip + 1
+	_ip
 ),
 
-let cells = dim(30000),
-let head = 0,
-let buffer = read_line(),
-let ip = 0,
+cells = dim(30000),
+head = 0,
+line = read_line(),
+ip = 0,
 
 (
-	let in = buffer[ip],
-	in == '+' ?
-		let cells[head] = cells[head] + 1
-	: in == '-' ?
-		let cells[head] = cells[head] - 1
-	: in == '<' ?
-		let head = head - 1
-	: in == '>' ?
-		let head = head + 1
-	: in == '[' and cells[head] == 0 ?
-		ip = find_end(buffer, ip)
-	: in == ']' ?
-		ip = find_start(buffer, ip)
-	: in == '.' ?
-		output(cells[head])
-	: in == ',' ?
-		let cells[head] = input()
-	: ()
-) until ip >= len(buffer)
+	char = line[ip],
+	char == '+' ?
+		(cells[head] = cells[head] + 1 < 0 ? 255 : cells[head] + 1 > 255 ? 0 : cells[head] + 1)
+	: char == '-' ?
+		(cells[head] = cells[head] - 1 < 0 ? 255 : cells[head] - 1 > 255 ? 0 : cells[head] - 1)
+	: char == '<' ?
+		(head = head - 1)
+	: char == '>' ?
+		(head = head + 1)
+	: char == '[' and cells[head] == 0 ?
+		(ip = find_end(line, ip))
+	: char == ']' ?
+		(ip = find_start(line, ip))
+	: char == '.' ?
+		(output(cells[head]))
+	: char == ',' ?
+		(cells[head] = input())
+	: nil,
+	ip = ip + 1
+) until ip >= len(line)

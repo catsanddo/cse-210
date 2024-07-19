@@ -195,6 +195,10 @@ class Value
         switch (_type)
         {
             case ValueType.Array:
+            if (_array.Length == 0)
+            {
+                return "{}";
+            }
             string array = "{";
             foreach (double number in _array)
             {

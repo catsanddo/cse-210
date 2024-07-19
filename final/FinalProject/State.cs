@@ -10,6 +10,8 @@ class State
 
         _global.Add("sqrt", new Value(Builtin.Id.Sqrt));
         _global.Add("abs", new Value(Builtin.Id.Abs));
+        _global.Add("len", new Value(Builtin.Id.Len));
+        _global.Add("dim", new Value(Builtin.Id.Dim));
         _global.Add("sin", new Value(Builtin.Id.Sin));
         _global.Add("cos", new Value(Builtin.Id.Cos));
         _global.Add("tan", new Value(Builtin.Id.Tan));
@@ -38,6 +40,19 @@ class State
 
     public void SetValue(string name, Value value)
     {
+        for (int i = _localFrames.Count-1; i >= 0; --i)
+        {
+            if (_localFrames[i].ContainsKey(name))
+            {
+                _localFrames[i][name] = value;
+                return;
+            }
+        }
+        if (_global.ContainsKey(name))
+        {
+            _global[name] = value;
+            return;
+        }
         if (_localFrames.Count == 0)
         {
             _global[name] = value;
