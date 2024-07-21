@@ -141,7 +141,6 @@ static class Builtin
         return new Value((double)input);
     }
 
-    // TODO: translate LF to CRLF
     static private Value Output(Value[] arguments)
     {
         AssertArgLength(1, arguments);

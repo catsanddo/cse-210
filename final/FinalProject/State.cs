@@ -62,8 +62,7 @@ class State
         {
             return result;
         }
-        // TODO: decide on better error handling for undefined values
-        // For now return nil
+        // Return nil
         return new Value();
     }
 }

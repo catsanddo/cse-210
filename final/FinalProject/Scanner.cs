@@ -8,7 +8,6 @@ class Scanner
     private StreamReader _reader;
     private Dictionary<string,TokenType> _keywords;
     private Token _buffer;
-    // TODO: Add a newline table
 
     public Scanner(string source)
     {

@@ -1,6 +1,5 @@
 class Value
 {
-    // TODO: store a reference to a builtin database
     private ValueType _type;
     private double[] _array;
     private double _number;
@@ -80,7 +79,6 @@ class Value
 
     public bool IsCallable()
     {
-        // TODO: check if _builtinName exists as a valid builtin
         return _type == ValueType.Function || _type == ValueType.Builtin;
     }
 
