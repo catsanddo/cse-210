@@ -34,7 +34,7 @@ Instead `0`, `nil`, and an empty array are considered falsey.
 All other values are truthy.
 
 String literals are supported as arrays of ASCII codes (e.g. `"hello"` becomes `{104, 101, 108, 108, 111}`)
-Escape sequences are supported for '\' '"' and LF newlines.
+Escape sequences are supported for `'\'` `'"'` and `LF` newlines.
 
 Standard decimal literals are supported (e.g. `123.45` or `.5`).
 ASCII code literals are also supported (e.g. `'A'` becomes 65).
@@ -59,7 +59,7 @@ Most of these operators behave as you would expect, but some added clarity follo
 
 The `^` operator indicates a power operation.
 The left hand is raised to the right hand power.
-Fractional powers are supported.
+Fractional and negative powers are supported.
 
 All of the traditional boolean operators will evaluate to a `1` for true or a `0` for false.
 `and` and `or` posses the same short-circuiting behavior commonly found in other languages.
@@ -159,7 +159,7 @@ Built-in functions:
 | `acos(n)`       | Takes the acos of `n`                                      |
 | `atan(n)`       | Takes the atan of `n`                                      |
 | `input()`       | Return the ASCII code of one character from standard input |
-| `output(n)`     | Output n as an ASCII code or an array of ASCII codes       |
+| `output(n)`     | Output `n` as an ASCII code or an array of ASCII codes       |
 | `quit()`        | Quits the program immediately                              |
 
 ## Credits
