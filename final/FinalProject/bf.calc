@@ -1,6 +1,6 @@
 read_line = {} (
 	buffer = dim(0),
-	output("> "),
+	output("Enter a bf program: "),
 	in = input(),
 	(
 		buffer = buffer << in,

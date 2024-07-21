@@ -40,20 +40,7 @@ class State
 
     public void SetValue(string name, Value value)
     {
-        for (int i = _localFrames.Count-1; i >= 0; --i)
-        {
-            if (_localFrames[i].ContainsKey(name))
-            {
-                _localFrames[i][name] = value;
-                return;
-            }
-        }
-        if (_global.ContainsKey(name))
-        {
-            _global[name] = value;
-            return;
-        }
-        if (_localFrames.Count == 0)
+        if (_global.ContainsKey(name) || _localFrames.Count == 0)
         {
             _global[name] = value;
             return;

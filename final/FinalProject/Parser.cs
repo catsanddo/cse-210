@@ -59,12 +59,29 @@ class Parser
 
     public Expression ParseExpression()
     {
-        return ParseAssignment();
+        return ParseSeries();
+    }
+
+    public Expression ParseSeries()
+    {
+        Expression left = ParseAssignment();
+
+        while (true)
+        {
+            if (_scanner.MatchToken(TokenType.Comma))
+            {
+                left = new Comma(left, ParseAssignment());
+            }
+            else
+            {
+                return left;
+            }
+        }
     }
 
     public Expression ParseAssignment()
     {
-        Expression left = ParseComparison();
+        Expression left = ParseLoop();
 
         if (_scanner.MatchToken(TokenType.Equal))
         {
@@ -72,6 +89,65 @@ class Parser
         }
 
         return left;
+    }
+
+    public Expression ParseLoop()
+    {
+        Expression left = ParseTernary();
+
+        while (true)
+        {
+            if (_scanner.MatchToken(TokenType.Until))
+            {
+                left = new Until(left, ParseTernary());
+            }
+            else
+            {
+                return left;
+            }
+        }
+    }
+
+    public Expression ParseTernary()
+    {
+        Expression condition = ParseLogical();
+
+        if (_scanner.MatchToken(TokenType.Query))
+        {
+            Expression left = ParseLogical();
+
+            if (!_scanner.MatchToken(TokenType.Colon))
+            {
+                Token error = _scanner.GetToken();
+                _errors.Add($"Expected ':' at {error.Offset}; got {error.GetLexeme()} instead.");
+                return new Literal(new Value());
+            }
+
+            return new Ternary(condition, left, ParseTernary());
+        }
+
+        return condition;
+    }
+
+    public Expression ParseLogical()
+    {
+        Expression left = ParseComparison();
+
+        while (true)
+        {
+            if (_scanner.MatchToken(TokenType.And))
+            {
+                left = new LogicalAnd(left, ParseComparison());
+            }
+            else if (_scanner.MatchToken(TokenType.Or))
+            {
+                left = new LogicalOr(left, ParseComparison());
+            }
+            else
+            {
+                return left;
+            }
+        }
     }
 
     public Expression ParseComparison()

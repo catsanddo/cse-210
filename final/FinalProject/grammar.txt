@@ -1,11 +1,11 @@
-#program = expression ;
+program = expression ;
 
-#expression = series ;
-+series = assignment ( "," assignment)* ;
+expression = series ;
+series = assignment ( "," assignment)* ;
 assignment = loop ( "=" assignment )? ;
-+loop = ternary ( "until" ternary )* ;
-+ternary = logical ( "?" logical ":" ternary )? ;
-+logical = comparison ( ( "and" | "or" ) comparison )* ;
+loop = ternary ( "until" ternary )* ;
+ternary = logical ( "?" logical ":" ternary )? ;
+logical = comparison ( ( "and" | "or" ) comparison )* ;
 comparison = term ( ( "<" | "<=" | ">" | ">=" | "==" | "!=" ) term )* ;
 term = factor ( ( "+" | "-" ) factor )* ;
 factor = power ( ( "*" | "/" ) power )* ;
@@ -24,10 +24,7 @@ function = "{" identifier* "}" assignment ;
 ALPHA = ("a" ... "z" ) | ( "A" ... "Z" ) | "_" ;
 DIGIT = "0" ... "9" ;
 STRING = """ character* """ ;
-character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | """ ) ) ;
-
-Anything prefixed with a "+" is not yet implemented yet
-Anything prefixed with a "#" is partially implemented
+character = ( " " ... "~" - """ - "\" ) | ( "\" ( "\" | "n" | "\"" ) ) ;
 
 types:
 array
@@ -38,6 +35,8 @@ nil
 built-in functions:
 sqrt(n) = n ^ 0.5
 abs(n) = n < 0 ? -n : n
+dim(n) = {0, 0, 0, ... n}
+len(a) = length of array
 sin(n) = sin(n)
 cos(n) = cos(n)
 tan(n) = tan(n)
